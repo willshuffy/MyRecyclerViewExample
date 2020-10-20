@@ -2,6 +2,7 @@ package com.willshuffyproject.myrecyclerviewexample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.GridLayoutManager
@@ -12,6 +13,13 @@ class MainActivity : AppCompatActivity() {
 
     private val list = ArrayList<Hero>()
     private var title = "Mode List"
+    private var mode: Int = 0
+
+    companion object{
+        private const val STATE_TITLE = "state_string"
+        private const val STATE_LIST = "state_list"
+        private const val STATE_MODE = "state_mode"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,9 +27,23 @@ class MainActivity : AppCompatActivity() {
 
         rv_heroes.setHasFixedSize(true)
 
-        list.addAll(getListHeroes())
-        showRecyclerList()
-        setActionBarTitle(title)
+        if (savedInstanceState == null){
+            list.addAll(getListHeroes())
+            showRecyclerList()
+            setActionBarTitle(title)
+
+            mode = R.id.action_list
+        }else{
+            title = savedInstanceState.getString(STATE_TITLE).toString()
+            val stateList = savedInstanceState.getParcelableArrayList<Hero>(STATE_LIST)
+            val stateMode = savedInstanceState.getInt(STATE_MODE)
+
+            setActionBarTitle(title)
+            if (stateList != null){
+                list.addAll(stateList)
+            }
+            setMode(stateMode)
+        }
     }
 
 
@@ -74,6 +96,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setActionBarTitle(title)
+        mode = selectedMode
     }
 
     private fun showRecyclerGrid(){
@@ -91,5 +114,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun setActionBarTitle(title: String?) {
      supportActionBar?.title = title
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_TITLE, title)
+        outState.putParcelableArrayList(STATE_LIST, list)
+        outState.putInt(STATE_MODE, mode)
     }
 }
