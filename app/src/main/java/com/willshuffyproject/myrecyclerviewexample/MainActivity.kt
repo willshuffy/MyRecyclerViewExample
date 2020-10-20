@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,13 +45,6 @@ class MainActivity : AppCompatActivity() {
             }
             setMode(stateMode)
         }
-    }
-
-
-    private fun showRecyclerList() {
-        rv_heroes.layoutManager = LinearLayoutManager(this)
-        val listHeroAdapter = ListHeroAdapter(list)
-        rv_heroes.adapter = listHeroAdapter
     }
 
     fun getListHeroes(): ArrayList<Hero> {
@@ -99,10 +93,28 @@ class MainActivity : AppCompatActivity() {
         mode = selectedMode
     }
 
+    private fun showRecyclerList() {
+        rv_heroes.layoutManager = LinearLayoutManager(this)
+        val listHeroAdapter = ListHeroAdapter(list)
+        rv_heroes.adapter = listHeroAdapter
+
+        listHeroAdapter.setOnItemClickCallback(object: ListHeroAdapter.OnItemClickCallback{
+            override fun onItemClicked(data: Hero) {
+                showSelectedHero(data)
+            }
+        })
+    }
+
     private fun showRecyclerGrid(){
         rv_heroes.layoutManager = GridLayoutManager(this, 2)
         val gridHeroAdapter = GridHeroAdapter(list)
         rv_heroes.adapter = gridHeroAdapter
+
+        gridHeroAdapter.setOnItemClickCallback(object : GridHeroAdapter.OnItemClickCallback{
+            override fun onItemClicked(data: Hero) {
+                showSelectedHero(data)
+            }
+        })
     }
 
     private fun showRecyclerCardView(){
@@ -121,5 +133,9 @@ class MainActivity : AppCompatActivity() {
         outState.putString(STATE_TITLE, title)
         outState.putParcelableArrayList(STATE_LIST, list)
         outState.putInt(STATE_MODE, mode)
+    }
+
+    private fun showSelectedHero(hero: Hero){
+        Toast.makeText(this, "Kamu memilih ${hero.name}", Toast.LENGTH_SHORT).show()
     }
 }
