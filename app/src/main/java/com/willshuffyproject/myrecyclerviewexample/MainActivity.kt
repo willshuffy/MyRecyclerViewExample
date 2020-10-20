@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val list = ArrayList<Hero>()
+    private var title = "Mode List"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +21,9 @@ class MainActivity : AppCompatActivity() {
 
         list.addAll(getListHeroes())
         showRecyclerList()
+        setActionBarTitle(title)
     }
+
 
     private fun showRecyclerList() {
         rv_heroes.layoutManager = LinearLayoutManager(this)
@@ -59,14 +62,18 @@ class MainActivity : AppCompatActivity() {
         when(selectedMode){
             R.id.action_list -> {
                 showRecyclerList()
+                title = "Mode List"
             }
             R.id.action_grid ->{
                 showRecyclerGrid()
+                title = "Mode Grid"
             }
             R.id.action_cardview -> {
                 showRecyclerCardView()
+                title = "Mode CardView"
             }
         }
+        setActionBarTitle(title)
     }
 
     private fun showRecyclerGrid(){
@@ -79,5 +86,10 @@ class MainActivity : AppCompatActivity() {
         rv_heroes.layoutManager = LinearLayoutManager(this)
         val cardViewHeroAdapter = CardViewHeroAdapter(list)
         rv_heroes.adapter = cardViewHeroAdapter
+    }
+
+
+    private fun setActionBarTitle(title: String?) {
+     supportActionBar?.title = title
     }
 }
